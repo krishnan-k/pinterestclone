@@ -1,19 +1,27 @@
 import React, { useState } from "react";
 import headerLogo from "../images/Pinterest.svg";
+import { FaSearch } from "react-icons/fa";
 import { IoNotifications } from "react-icons/io5";
 import { BiSolidMessageRoundedDetail } from "react-icons/bi";
-import { FaSearch } from "react-icons/fa";
 import "../component-css/Navbar.css";
 import { Link } from "react-router-dom";
-const Navbar = () => {
-  const [activeState, setActiveState] = useState(0);
 
-  const navLinks = [
+// Define the type for navigation links
+interface NavLink {
+  path: string;
+  label: string;
+}
+
+const Navbar: React.FC = () => {
+  const [activeState, setActiveState] = useState<number>(0);
+
+  const navLinks: NavLink[] = [
     { path: "/", label: "Home" },
     { path: "/Explore", label: "Explore" },
     { path: "/Create", label: "Create" },
   ];
-  const handleMouseOver = (index) => {
+
+  const handleMouseOver = (index: number): void => {
     setActiveState(index);
   };
 
@@ -22,7 +30,9 @@ const Navbar = () => {
       <div className="navbar-content">
         <div className="header-section">
           <div className="logo">
-            <img src={headerLogo} alt="header-logo" />
+            <Link to="/">
+              <img src={headerLogo} alt="Pinterest Logo" />
+            </Link>
           </div>
           <div className="navigation">
             <ul>
@@ -39,14 +49,14 @@ const Navbar = () => {
           </div>
         </div>
         <div className="input-box">
-          <div class="search-box">
+          <div className="search-box">
             <div className="search-icons">
               <FaSearch />
             </div>
             <input
               type="text"
-              class="form-control"
-              placeholder="search anything"
+              className="form-control"
+              placeholder="Search anything"
             />
           </div>
         </div>
