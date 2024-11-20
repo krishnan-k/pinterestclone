@@ -1,52 +1,57 @@
-import React, { useState } from 'react';
-import { followPicture, likePicture } from '../middleware/Api';
+// ImageCard.tsx
+import React, { useState } from "react";
 
-
-interface PictureProps {
-    id: string;
-    title: string;
-    imageUrl: string;
-    likes: number;
-    followers: string[];
-    userId: string; // Logged-in user's ID
+interface ImageCardProps {
+  id: string;
+  title: string;
+  imageUrl: string;
+  likes: number;
+  followers: string[];
+  userId: string;
 }
 
-const ImageCard: React.FC<PictureProps> = ({ id, title, imageUrl, likes, followers, userId }) => {
-    const [likeCount, setLikeCount] = useState<number>(likes);
-    const [isFollowing, setIsFollowing] = useState<boolean>(followers.includes(userId));
+const ImageCard: React.FC<ImageCardProps> = ({id,title,imageUrl,likes,followers,userId,}) => {
+  const [localLikes, setLocalLikes] = useState(likes);
+  const [localFollowers, setLocalFollowers] = useState(followers);
+  const [isLiked, setIsLiked] = useState(false); 
+  // Like 
+  const handleLike = () => {
+    if (isLiked) {
+      setLocalLikes(localLikes - 1);
+    } else {
+      setLocalLikes(localLikes + 1);
+    }
+    setIsLiked(!isLiked);
+  };
 
-    // Handle like button click
-    const handleLike = async () => {
-        try {
-            const updatedPicture = await likePicture(id);
-            setLikeCount(updatedPicture.likes);
-        } catch (error) {
-            console.error('Error liking picture:', error);
-        }
-    };
+  // Follow/unfollow 
+  const handleFollow = () => {
+    if (localFollowers.includes(userId)) {
+      setLocalFollowers(localFollowers.filter((follower) => follower !== userId));
+    } else {
+      setLocalFollowers([...localFollowers, userId]);
+    }
+  };
 
-    // Handle follow button click
-    const handleFollow = async () => {
-        try {
-            const updatedPicture = await followPicture(id, userId);
-            setIsFollowing(updatedPicture.followers.includes(userId));
-        } catch (error) {
-            console.error('Error following picture:', error);
-        }
-    };
+  //Tag
+  const handleTag = () => {
+    alert(`Tagging image with ID: ${id}`); 
+  };
 
-    return (
-        <div className="picture-card">
-            <img src={imageUrl} alt={title} />
-            <h3>{title}</h3>
-            <div className="actions">
-                <button onClick={handleLike}>❤️ Like ({likeCount})</button>
-                <button onClick={handleFollow}>
-                    {isFollowing ? 'Unfollow' : 'Follow'}
-                </button>
-            </div>
+  return (
+    <div className="img-card">
+      <img src={imageUrl} alt={title} />
+      <button className="like-btn" onClick={handleLike}>Like ({localLikes})</button>
+      <div className="img-info">
+        <div className="img-actions">
+          <button className="follow-btn" onClick={handleFollow}>
+            {localFollowers.includes(userId) ? "Unfollow" : "Follow"} ({localFollowers.length})
+          </button>
+          <button className="tag-btn" onClick={handleTag}>Tag</button>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default ImageCard;

@@ -1,77 +1,82 @@
 import { Request, Response } from "express";
-import { PinterestImage } from "../middlewareAPI/Middleware";
 import PinterestPicture from "../models/PinterestPicture";
-export const imageSync = async (_req: Request, res: Response):Promise<any> => {
+
+// Fetch all pictures from the database
+export const getAllPictures = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const images = await PinterestImage();
-    for (const image of images) {
-      const existingPicture = PinterestPicture.findOne({
-        pinterestId: image.id,
-      });
-      if (!existingPicture) {
-        await PinterestPicture.create({
-          pinterestId: image.id,
-          title: image.note,
-          imageUrl: image.image.original.url,
-        });
-      }
+    const pictures = await PinterestPicture.find();
+    if (!pictures.length) {
+      return res.status(404).json({ error: "No images found." });
     }
-    res.status(200).json({ message: "Pinterest images synced" });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    return res.status(200).json(pictures);
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    return res.status(500).json({ error: "Failed to fetch images." });
   }
 };
 
-//Like image
-export const likeImage = async (req: Request, res: Response):Promise<any> => {
+// Like an image
+export const likeImage = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { id } = req.params;
-    const image = await PinterestPicture.findById(id);
-    if (!image) return res.status(404).json({ error: "Imaeg not found" });
+    const picture = await PinterestPicture.findById(id);
 
-    image.likes += 1;
-    await image.save();
-    res.status(200).json(image);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    if (!picture) {
+      return res.status(404).json({ error: "Image not found" });
+    }
+
+    picture.likes += 1;
+    await picture.save();
+    return res.status(200).json(picture);
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    return res.status(500).json({ error: "Failed to like image" });
   }
 };
 
-//tag image
-export const tagImage = async (req: Request, res: Response):Promise<any> => {
+// Tag an image
+export const tagImage = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { id } = req.params;
     const { tags } = req.body;
 
-    const image = await PinterestPicture.findById(id);
-    if (!image) return res.status(404).json({ error: "image not found" });
+    const picture = await PinterestPicture.findById(id);
+    if (!picture) {
+      return res.status(404).json({ error: "Image not found" });
+    }
 
-    image.tags.push(...tags);
-    await image.save();
-    res.status(200).json(image);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    // Add tags if they are unique
+    picture.tags = [...new Set([...picture.tags, ...tags])];
+    await picture.save();
+    return res.status(200).json(picture);
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    return res.status(500).json({ error: "Failed to tag image" });
   }
 };
 
-//follow image & unfollow image
-export const followImage = async (req: Request, res: Response):Promise<any> => {
+// Follow or Unfollow an image
+export const followImage = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { id } = req.params;
     const { userId } = req.body;
 
-    const image = await PinterestPicture.findById(id);
-    if (!image) return res.status(404).json({ error: "image not found" });
-
-    if (!image.followers.includes(userId)) {
-      image.followers.push(userId);
-    } else {
-      image.followers = image.followers.filter((item) => item !== userId);
+    const picture = await PinterestPicture.findById(id);
+    if (!picture) {
+      return res.status(404).json({ error: "Image not found" });
     }
 
-    await image.save();
-    res.status(200).json(image);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    // Add or remove the user from the followers list
+    if (!picture.followers.includes(userId)) {
+      picture.followers.push(userId);
+    } else {
+      picture.followers = picture.followers.filter((follower) => follower !== userId);
+    }
+
+    await picture.save();
+    return res.status(200).json(picture);
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    return res.status(500).json({ error: "Failed to follow/unfollow image" });
   }
 };

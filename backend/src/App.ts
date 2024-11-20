@@ -4,7 +4,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import ImageRouter from "./routes/ImageRouter";
-
+import PictureRouter from "./routes/PictureRouter";
 dotenv.config();
 
 const app = express();
@@ -14,7 +14,9 @@ app.use(cors());
 app.use(bodyParser.json());
 
 //Router
-app.use("/api/imagerouter", ImageRouter);
+app.use("/api/image", ImageRouter);
+
+app.use("/api/postimage", PictureRouter)
 //Backend running
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello world");
@@ -25,5 +27,6 @@ mongoose
   .connect(process.env.MONGO_URI || "", {})
   .then(() => console.log("Connect to MongoDB"))
   .catch((err) => console.log("Database connection error:", err));
+  
 
 export default app;
