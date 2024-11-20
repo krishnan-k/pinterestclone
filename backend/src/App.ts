@@ -3,7 +3,6 @@ import express, { Request, request, Response } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import ImageRouter from "./routes/ImageRouter";
 import PictureRouter from "./routes/PictureRouter";
 dotenv.config();
 
@@ -14,9 +13,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 //Router
-app.use("/api/image", ImageRouter);
-
 app.use("/api/postimage", PictureRouter)
+
 //Backend running
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello world");

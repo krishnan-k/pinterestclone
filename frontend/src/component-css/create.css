@@ -1,0 +1,66 @@
+  
+  .pannel .addpannel {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    max-width: 900px;
+    margin: auto;
+    padding: 50px;
+}
+
+  .pannel input[type="text"],
+  .pannel input[type="number"],
+  textarea {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px;
+    border: none;
+    margin-top: 5px;
+    transition: box-shadow 0.3s linear;
+  }
+  .pannel .addpannel input[type="text"]:focus-visible,
+  .pannel .addpannel input[type="number"]:focus-visible,
+  textarea:focus-visible {
+    outline: none;
+  }
+  .pannel .addpannel .form_description textarea {
+    min-height: 150px;
+  }
+  
+  .pannel form.addpannel > *:not(button) {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 15px;
+  }
+  
+  .pannel form.addpannel .upload-button{
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    line-height: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 36px;
+    border-radius: 5px;
+    /* width: 40%; */
+  }
+  .pannel form.addpannel .upload-button {
+    background: #18c985;
+    cursor: pointer;
+  }
+  .pannel form.addpannel .upload-button svg{
+    width: 16px;
+    height: 16px;
+  }
+  
+  .pannel .addpannel input[type="text"]::placeholder,
+  textarea::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 13px;
+  }
+ 

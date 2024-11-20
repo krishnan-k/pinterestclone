@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IImage extends Document {
   title: string;
+  description: string;
   imageUrl: string;
   likes: number;
   followers: string[];
@@ -10,6 +11,7 @@ export interface IImage extends Document {
 const imageSchema: Schema = new Schema(
   {
     title: { type: String, required: true },
+    description: { type: String, required: true },
     imageUrl: { type: String, required: true },
     likes: { type: Number, default: 0 },
     followers: { type: [String], default: [] },

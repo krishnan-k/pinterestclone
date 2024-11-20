@@ -1,0 +1,58 @@
+.main-image .img-card-detail {
+    display: flex;
+    width: 100%;
+}
+.main-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    max-width: 850px;
+    margin: 50px auto;
+    border-radius: 30px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 20px 0px;
+}
+.main-image .img-card-detail >*{
+    width: 100%;
+    text-align: left;
+}
+.main-image .img-card-detail .card-image img {
+    width: 100%;
+    height: 100%;
+    border-radius: 30px 0 0 30px;
+    object-fit: cover;
+}
+.main-image .img-card-detail .card-inner-content {
+    padding: 50px;
+}
+.main-image button.like-btn-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+}
+.main-image button.follow-btn {
+    font-family: var(--font-body);
+    padding: 15px 20px;
+    background: #e60023;
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s linear;
+    border-radius: 30px;
+    font-size: 16px;
+    transition: all 0.3s linear;
+    border: 1px solid transparent;
+}
+.main-image button.follow-btn.active {
+    border: 1px solid #cdcdcd;
+    background: transparent;
+    color: black;
+}

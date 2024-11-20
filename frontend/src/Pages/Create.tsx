@@ -1,9 +1,10 @@
 import React from "react";
 import { IoMdCloudUpload } from "react-icons/io";
-
+import '../component-css/create.css'
 // Define the types for the form data
 interface ProductFormData {
   title: string;
+  description: string;
   imageUrl: string;
 }
 
@@ -16,15 +17,15 @@ const AddImage: React.FC = () => {
     const form = e.target as HTMLFormElement;
     const title = (form.elements.namedItem("title") as HTMLInputElement).value;
     const imageUrl = (form.elements.namedItem("imageUrl") as HTMLInputElement).value;
-
+    const description = (form.elements.namedItem("description") as HTMLInputElement).value;
     // Validate form fields
-    if (title === '' || imageUrl === '') {
+    if (title === '' || imageUrl === '' || description === '') {
       alert('Fill in all fields');
       return;
     }
 
     // Create the product object to be sent to the backend
-    const productObject: ProductFormData = { title, imageUrl };
+    const productObject: ProductFormData = { title, imageUrl, description };
 
     // Send data to backend using fetch API
     fetch("http://localhost:5000/api/postimage/imagespost", {
@@ -38,6 +39,7 @@ const AddImage: React.FC = () => {
       .then((data) => {
         alert('Product Added Successfully');
         form.reset();
+        window.location.href = "/"
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -48,7 +50,7 @@ const AddImage: React.FC = () => {
   return (
     <div className="pannel">
       <div className="form-control-section">
-        <form className="editdashboard" onSubmit={handleSubmit}>
+        <form className="addpannel" onSubmit={handleSubmit}>
           <div className="form_title mb-3">
             <label className="text-capitalize" htmlFor="title">
               Title
@@ -73,6 +75,18 @@ const AddImage: React.FC = () => {
               name="imageUrl"
               placeholder="Add your image URL here"
             />
+          </div>
+
+          <div className="form_title mb-3">
+            <label className="text-capitalize" htmlFor="description">
+              Title
+            </label>
+            <textarea 
+              id="description"
+              name="description"
+              placeholder="Add your title here">
+              
+            </textarea>
           </div>
 
           <div className="editable-buttons">

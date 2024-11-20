@@ -1,10 +1,10 @@
 import React from "react";
-import ImageGrid from "../components/ImageGrid";
+import ImageGridWithCards from "../components/ImageGridWithCards";
 
 const Home = () => {
   return (
     <div className="home page">
-        <ImageGrid/>
+        <ImageGridWithCards/>
     </div>
   );
 };
