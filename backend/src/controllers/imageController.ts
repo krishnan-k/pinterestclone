@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as imageService from "../utils/imageService"; 
+import * as imageService from "../view/imageService"; 
 
 // image post
 export const createImage = async (req: Request, res: Response): Promise<void> => {

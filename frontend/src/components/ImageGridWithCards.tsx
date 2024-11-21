@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../component-css/ImageGrid.css"; // Assuming this CSS is still required for styling
+import "../component-css/ImageGrid.css"; 
 import { Link } from "react-router-dom";
 import heart from "../images/heart.svg";
 import like from "../images/like.svg";
