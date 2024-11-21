@@ -1,50 +1,69 @@
-import React from "react";
+import React, { useState } from "react";
 import { IoMdCloudUpload } from "react-icons/io";
-import '../component-css/create.css'
-// Define the types for the form data
+import "../component-css/create.css";
+
 interface ProductFormData {
   title: string;
   description: string;
   imageUrl: string;
+  tags: string[];
 }
 
 const AddImage: React.FC = () => {
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState<string>("");
+
+  const handleTagAddition = () => {
+    if (tagInput.trim() === "") {
+      alert("Tag cannot be empty.");
+      return;
+    }
+    if (tags.includes(tagInput.trim())) {
+      alert("Tag already exists.");
+      return;
+    }
+    setTags([...tags, tagInput.trim()]);
+    setTagInput("");
+  };
+
+  const handleTagRemoval = (tag: string) => {
+    setTags(tags.filter((t) => t !== tag));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Cast form to HTMLFormElement to access input values
-    const form = e.target as HTMLFormElement;
-    const title = (form.elements.namedItem("title") as HTMLInputElement).value;
-    const imageUrl = (form.elements.namedItem("imageUrl") as HTMLInputElement).value;
-    const description = (form.elements.namedItem("description") as HTMLInputElement).value;
-    // Validate form fields
-    if (title === '' || imageUrl === '' || description === '') {
-      alert('Fill in all fields');
+    if (!title || !description || !imageUrl) {
+      alert("Please fill all fields.");
       return;
     }
 
-    // Create the product object to be sent to the backend
-    const productObject: ProductFormData = { title, imageUrl, description };
+    const productObject: ProductFormData = { title, description, imageUrl, tags };
 
-    // Send data to backend using fetch API
-    fetch("http://localhost:5000/api/postimage/imagespost", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(productObject)
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        alert('Product Added Successfully');
-        form.reset();
-        window.location.href = "/"
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('Something went wrong. Please try again.');
+    try {
+      const response = await fetch("http://localhost:5000/api/postimage/imagespost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(productObject),
       });
+
+      if (response.ok) {
+        alert("Image added successfully!");
+        setTitle("");
+        setDescription("");
+        setImageUrl("");
+        setTags([]);
+        window.location.href="/"
+      } else {
+        alert("Error adding image. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -52,49 +71,68 @@ const AddImage: React.FC = () => {
       <div className="form-control-section">
         <form className="addpannel" onSubmit={handleSubmit}>
           <div className="form_title mb-3">
-            <label className="text-capitalize" htmlFor="title">
-              Title
-            </label>
+            <label htmlFor="title">Title</label>
             <input
-              className="text-capitalize"
               type="text"
               id="title"
               name="title"
-              placeholder="Add your title here"
+              placeholder="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
           </div>
 
           <div className="form_image mb-3">
-            <label className="text-capitalize" htmlFor="imageUrl">
-              Image URL
-            </label>
+            <label htmlFor="imageUrl">Image URL</label>
             <input
-              className="text-capitalize"
               type="text"
               id="imageUrl"
               name="imageUrl"
-              placeholder="Add your image URL here"
+              placeholder="Image URL"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
             />
           </div>
 
           <div className="form_title mb-3">
-            <label className="text-capitalize" htmlFor="description">
-              Title
-            </label>
-            <textarea 
+            <label htmlFor="description">Description</label>
+            <textarea
               id="description"
               name="description"
-              placeholder="Add your title here">
-              
-            </textarea>
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+
+          <div className="tag-section">
+            <label>Tags</label>
+            <div className="tag-input">
+              <input
+                type="text"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                placeholder="Add a tag"
+              />
+              <button className="adding-tag" type="button" onClick={handleTagAddition}>
+                Add Tag
+              </button>
+            </div>
+            <div className="tag-list">
+              {tags.map((tag, index) => (
+                <span key={index} className="tag">
+                  <span className="tag-content">{tag}
+                  <button className="closing-tag" type="button" onClick={() => handleTagRemoval(tag)}>
+                    x
+                  </button>
+                  </span>
+                </span>
+              ))}
+            </div>
           </div>
 
           <div className="editable-buttons">
-            <button
-              id="upload"
-              className="text-capitalize upload-button shine-effect"
-              type="submit"
-            >
+            <button type="submit" className="upload-button shine-effect">
               <IoMdCloudUpload /> Upload
             </button>
           </div>

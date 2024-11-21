@@ -47,7 +47,12 @@
     margin-left: 20px;
 }
 .navbar-section .navbar-content .navigaion-icons >*:not(:last-child) {
-    margin-right: 15px;
+    margin-right: 0;
+}
+.search.icon-1 svg {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
 }
 .navbar-section .navbar-content .input-box,
 .navbar-section .navbar-content .input-box input {
@@ -55,11 +60,17 @@
 }
 .navbar-section .navbar-content .input-box input {
     border-radius: 30px;
-    height: 25px;
+    height: 50px;
     outline: none;
     border: none;
-    padding: 12px;
+    padding: 12px 12px 12px 42px;
     background-color: rgb(241, 241, 241);
+}
+.image-section-search .picture-grid {
+    background: white;
+}
+.image-section-search .picture-grid{
+    column-count: 6;
 }
 .navbar-section .navbar-content .icon-1 {
     width: 48px;
@@ -67,6 +78,40 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+body.search-active {
+    overflow: hidden; 
+  }
+.navbar-content{
+    position: relative;
+}
+.search-active:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    background: #0000008a;
+    z-index: 1;
+    top: 80px;
+}
+.search-active .navbar-section {
+    z-index: 2;
+    position: relative;
+}
+.image-section-search {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    padding: 30px;
+    background: white;
+    border-radius: 0 0 30px 30px;
 }
 .navbar-section .navbar-content .header-section .logo {
     display: flex;
@@ -79,7 +124,6 @@
 input.form-control::placeholder {
     text-transform: capitalize;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',    sans-serif;
-    padding-left: 30px;
 }
 .navbar-section .navbar-content .input-box .search-icons {
     position: absolute;
@@ -90,4 +134,20 @@ input.form-control::placeholder {
 }
 .navbar-section .navbar-content .input-box .search-box {
     position: relative;
+}
+
+
+@media screen and (max-width: 767px) {
+    .navbar-section .navbar-content{
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    .navbar-section .navbar-content .input-box{
+        order: 2;
+    }
+}
+@media screen and (max-width: 480px) {
+    .navbar-section .navbar-content{
+        justify-content: center;
+    }
 }

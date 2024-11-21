@@ -1,80 +1,73 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import "../component-css/ImageGrid.css"; // Assuming this CSS is still required for styling
-import "../component-css/Mainimage.css"; // Ensure styling is correct for description
-import heart from '../images/heart.svg'
+import "../component-css/ImageGrid.css";
+import "../component-css/Mainimage.css";
+import heart from "../images/heart.svg";
+import like from "../images/like.svg";
 interface Picture {
   _id: string;
   title: string;
   imageUrl: string;
   likes: number;
   followers: string[];
-  description: string; // Ensure description is included in your Picture interface
+  description: string;
+  tags: string[];
 }
 
 const MainImage: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // Get image ID from URL params
-  const [picture, setPicture] = useState<Picture | null>(null); // State for the single picture
-  const [isLiked, setIsLiked] = useState(false); // Track if the user has liked this image
+  const { id } = useParams<{ id: string }>();
+  const [picture, setPicture] = useState<Picture | null>(null);
+  const [isLiked, setIsLiked] = useState(false);
 
-  // Fetch single image details based on the ID
   useEffect(() => {
     fetch(`http://localhost:5000/api/postimage/imagesget/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setPicture(data);
-        setIsLiked(data.likes.includes("user123")); // Check if the user has already liked this image
+        setIsLiked(data.likes.includes("user123"));
       })
       .catch((error) => console.error("Error fetching image:", error));
   }, [id]);
 
-  // Handle like functionality
-  const handleLike = () => {
+  const handleLike = async () => {
     if (picture) {
       const updatedLikes = isLiked ? picture.likes - 1 : picture.likes + 1;
-      setIsLiked(!isLiked); // Toggle the like status
-
-      // Update the picture's like count in the local state
+      setIsLiked(!isLiked);
       setPicture({ ...picture, likes: updatedLikes });
 
-      // Optionally, you can send the updated like count to the server
-      fetch(`http://localhost:5000/api/postimage/like/${picture._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: "user123", // Replace with dynamic user ID if applicable
-          liked: !isLiked,
-        }),
-      })
-        .then((res) => res.json())
-        .catch((error) => console.error("Error updating like status:", error));
+      try {
+        await fetch(`http://localhost:5000/api/postimage/like/${picture._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: "user123", liked: !isLiked }),
+        });
+      } catch (error) {
+        console.error("Error updating like:", error);
+      }
     }
   };
 
-  // Handle follow functionality
   const handleFollow = () => {
     if (picture) {
       const updatedFollowers = picture.followers.includes("user123")
         ? picture.followers.filter((follower) => follower !== "user123")
         : [...picture.followers, "user123"];
       setPicture({ ...picture, followers: updatedFollowers });
-      // Optional: Send the updated followers to the server
+
+      fetch(`http://localhost:5000/api/postimage/follow/${picture._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: "user123",
+        }),
+      }).catch((error) =>
+        console.error("Error updating follow status:", error)
+      );
     }
   };
-
-  // Handle tag functionality
-  const handleTag = () => {
-    if (picture) {
-      alert(`Tagging image with ID: ${picture._id}`);
-    }
-  };
-
-  // If picture data is not loaded yet, show a loading message
-  if (!picture) {
-    return <div>Loading...</div>;
-  }
+  if (!picture) return <div>Loading...</div>;
 
   return (
     <div className="image-section main-image">
@@ -87,22 +80,40 @@ const MainImage: React.FC = () => {
           />
         </div>
         <div className="card-inner-content">
-
           <button className="like-btn-main" onClick={handleLike}>
-            <img src={heart} alt="lik-icon"/>
-            {isLiked ? "Like" : "Like"} ({picture.likes})
+            {isLiked ? (
+              <>
+                <img src={like} alt="like-icon" />
+                Like
+              </>
+            ) : (
+              <>
+              <img src={heart} alt="liked-icon" />
+                
+                Like
+              </>
+            )}
+            ({picture.likes})
           </button>
           <h2>{picture.title}</h2>
-          <p className="image-description">{picture.description}</p> {/* Ensure this is rendered properly */}
-          <div className="img-info-main">
-            <button className={`follow-btn ${picture.followers.length === 0 ? 'active' : ''}`} onClick={handleFollow}>
-              {picture.followers.includes("user123") ? "Following" : "Follow"} (
-              {picture.followers.length})
-            </button>
-            <button className="tag-btn" onClick={handleTag}>
-              Tag
-            </button>
+          <p>{picture.description}</p>
+          <div className="tag-list">
+            <h3>Tags:</h3>
+            {picture.tags.map((tag, index) => (
+              <span key={index} className="tag">
+                {tag},
+              </span>
+            ))}
           </div>
+          <button
+            className={`follow-btn ${
+              picture.followers.includes("user123") ? "active" : ""
+            }`}
+            onClick={handleFollow}
+          >
+            {picture.followers.includes("user123") ? "Following" : "Follow"} (
+            {picture.followers.length})
+          </button>
         </div>
       </div>
     </div>

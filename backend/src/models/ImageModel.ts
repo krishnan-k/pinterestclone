@@ -6,6 +6,7 @@ export interface IImage extends Document {
   imageUrl: string;
   likes: number;
   followers: string[];
+  tags: string[];
 }
 
 const imageSchema: Schema = new Schema(
@@ -15,6 +16,7 @@ const imageSchema: Schema = new Schema(
     imageUrl: { type: String, required: true },
     likes: { type: Number, default: 0 },
     followers: { type: [String], default: [] },
+    tags: { type: [String], default: [] },
   },
   { timestamps: true }
 );

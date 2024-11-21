@@ -12,6 +12,10 @@
     border-radius: 30px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 20px 0px;
 }
+.main-image button.like-btn-main img {
+    width: 24px;
+    height: 24px;
+}
 .main-image .img-card-detail >*{
     width: 100%;
     text-align: left;

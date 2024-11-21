@@ -8,12 +8,12 @@ export const fetchPinterestImages = async (query: string = "nature") => {
     const response = await axios.get(Pinterest_API, {
       params: {
         key: API_KEY,
-        q: query, // Specify the search term
-        image_type: "photo", // Optional: filter image types
-        per_page: 20, // Optional: number of results per page
+        q: query, 
+        image_type: "photo",
+        per_page: 20, 
       },
     });
-    return response.data.hits; // Pixabay returns images in the `hits` array
+    return response.data.hits; 
   } catch (error) {
     throw new Error(`Failed to fetch images: ${error}`);
   }

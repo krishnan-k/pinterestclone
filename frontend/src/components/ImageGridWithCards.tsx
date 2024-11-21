@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import '../component-css/ImageGrid.css'; // Assuming this CSS is still required for styling
+import "../component-css/ImageGrid.css"; // Assuming this CSS is still required for styling
 import { Link } from "react-router-dom";
-
+import heart from "../images/heart.svg";
+import like from "../images/like.svg";
 interface Picture {
   _id: string;
   title: string;
@@ -13,12 +14,18 @@ interface Picture {
 
 const ImageGridWithCards: React.FC = () => {
   const [pictures, setPictures] = useState<Picture[]>([]);
-  const userId = "user123"; // Example user ID
+  const [likedImages, setLikedImages] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+
+  const userId = "user123"; 
 
   // Fetch images from the API
   const fetchPictures = async (): Promise<void> => {
     try {
-      const response = await fetch("http://localhost:5000/api/postimage/imagesget");
+      const response = await fetch(
+        "http://localhost:5000/api/postimage/imagesget"
+      );
       const data: Picture[] = await response.json();
       setPictures(data);
     } catch (error) {
@@ -26,62 +33,72 @@ const ImageGridWithCards: React.FC = () => {
     }
   };
 
-  // UseEffect hook to fetch data when component mounts
+  
   useEffect(() => {
     fetchPictures();
   }, []);
 
-  // Handle like functionality
-  // const handleLike = (id: string, isLiked: boolean, currentLikes: number) => {
-  //   const updatedPictures = pictures.map((picture) => {
-  //     if (picture._id === id) {
-  //       return {
-  //         ...picture,
-  //         likes: isLiked ? currentLikes - 1 : currentLikes + 1,
-  //       };
-  //     }
-  //     return picture;
-  //   });
-  //   setPictures(updatedPictures);
-  // };
+  //Like
+  const handleLike = async (id: string,isLiked: boolean,currentLikes: number) => {
+    
+    const updatedLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
+    setLikedImages((prevState) => ({...prevState,[id]: !isLiked, }));
 
-  // // Handle follow functionality
-  // const handleFollow = (id: string, currentFollowers: string[]) => {
-  //   const updatedPictures = pictures.map((picture) => {
-  //     if (picture._id === id) {
-  //       const updatedFollowers = currentFollowers.includes(userId)
-  //         ? currentFollowers.filter((follower) => follower !== userId)
-  //         : [...currentFollowers, userId];
-  //       return {
-  //         ...picture,
-  //         followers: updatedFollowers,
-  //       };
-  //     }
-  //     return picture;
-  //   });
-  //   setPictures(updatedPictures);
-  // };
-
-  // Handle tag functionality
-  // const handleTag = (id: string) => {
-  //   alert(`Tagging image with ID: ${id}`);
-  // };
+    // Update the likes
+    const updatedPictures = pictures.map((picture) => {
+      if (picture._id === id) {
+        return {
+          ...picture,
+          likes: updatedLikes,
+        };
+      }
+      return picture;
+    });
+    setPictures(updatedPictures);
+  };
 
   return (
     <div className="image-section">
       <div className="picture-grid">
         {pictures.map((picture) => (
-            <Link to={`/imagesget/${picture._id}`}>
-                <div key={picture._id} className="img-card">
-                    <img src={picture.imageUrl} alt={picture.title} />
-                    <p>{picture.description}</p>
-                    <button
-                    className="like-btn"
-                    >
-                    Like ({picture.likes})
-                    </button>
-                </div>
+          <div key={picture._id} className="img-card">
+            <Link className="" to={`/imagesget/${picture._id}`}>
+              <div className="img-inner-bg">
+                <img
+                  className="img-class"
+                  src={picture.imageUrl}
+                  alt={picture.title}
+                />
+              </div>
             </Link>
+            <div className="card-body">
+              <h5 className="card-title">{picture.title}</h5>
+              <p className="card-text">{picture.description}</p>
+            </div>
+            <button
+              className="like-btn-main like-btn"
+              onClick={() =>
+                handleLike(
+                  picture._id,
+                  likedImages[picture._id] || false,
+                  picture.likes
+                )
+              }
+            >
+              {likedImages[picture._id] ? (
+                <>
+                  <img src={like} alt="like-icon" />
+                  Liked
+                </>
+              ) : (
+                <>
+                  <img src={heart} alt="liked-icon" />
+                  Like
+                </>
+              )}
+              ({picture.likes})
+            </button>
+          </div>
         ))}
       </div>
     </div>

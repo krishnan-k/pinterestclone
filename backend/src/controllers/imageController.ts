@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
-import * as imageService from "../utils/imageService"; // Ensure this path is correct
+import * as imageService from "../utils/imageService"; 
 
-// POST request to create a new image
+// image post
 export const createImage = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { title, imageUrl, description } = req.body;
+    const { title, imageUrl, description, tags } = req.body;
 
-    if (!title || !imageUrl || !description) {
+    if (!title || !imageUrl || !description || !tags) {
       res.status(400).json({ message: "All fields are required" });
       return;
     }
 
-    const newImage = await imageService.createImage({ title, imageUrl, description });
+    const newImage = await imageService.createImage({ title, imageUrl, description, tags });
     res.status(201).json(newImage);
   } catch (error: any) {
     console.error("Error creating image:", error);
@@ -19,10 +19,18 @@ export const createImage = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-// GET request to fetch all images
+// get all image
 export const getAllImages = async (req: Request, res: Response): Promise<void> => {
   try {
-    const images = await imageService.getAllImages();
+    const { tag } = req.query; 
+    let images;
+
+    if (tag) {
+      images = await imageService.getAllImagesByTag(tag.toString());
+    } else {
+      images = await imageService.getAllImages();
+    }
+
     res.status(200).json(images);
   } catch (error: any) {
     console.error("Error fetching images:", error);
@@ -30,7 +38,7 @@ export const getAllImages = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// GET request to fetch a single image by ID
+// get unique image
 export const getImageById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -48,7 +56,7 @@ export const getImageById = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// PUT request to update an image
+// update image
 export const updateImage = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -66,7 +74,7 @@ export const updateImage = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-// DELETE request to delete an image
+// delete image
 export const deleteImage = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -83,3 +91,32 @@ export const deleteImage = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({ message: error.message });
   }
 };
+
+
+//add tag
+export const addTag = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { tag } = req.body;
+
+  try {
+    const updatedImage = await imageService.addTagToImage(id, tag);
+    res.status(200).json(updatedImage);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get tag
+export const getTags = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const tags = await imageService.getTagsForImage(id);
+    res.status(200).json(tags);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
